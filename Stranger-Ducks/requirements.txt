@@ -5,6 +5,3 @@ pandas
 matplotlib
 pygame
 scipy
-itertools
-random
-time
