@@ -199,7 +199,7 @@ class ObstacleManager():
                     self.obast2 = choice(self.obstacles)[1]
 
 
-    def display_obstacle(self, screen):
+    def display_obstacle(self):
         global status
         if status == 2:
             self.obs1 = (self.obs1[0]-speed, self.obs1[1])
@@ -208,9 +208,6 @@ class ObstacleManager():
             self.obs4 = (self.obs4[0]-speed, self.obs4[1])
             
             self.obs1_cub = (self.obs1[0], self.obs1[1], self.obs1[0] + self.obast1.size[0], self.obs1[1] + self.obast1.size[1])
-            print(self.obs1_cub)
-            screen.fill(RED, self.obs1_cub)
-            screen.update()
             self.obs2_cub = (self.obs2[0], self.obs2[1], self.obs2[0] + self.obast2.size[0], self.obs2[1] + self.obast2.size[1])
             self.obs3_cub = (self.obs3[0], self.obs3[1], self.obs3[0] - self.obast3.size[0], self.obs3[1] - self.obast3.size[1])
             self.obs4_cub = (self.obs4[0], self.obs4[1], self.obs4[0] - self.obast4.size[0], self.obs4[1] - self.obast4.size[1])
@@ -279,7 +276,7 @@ class Game(object):
         global height
         bg = (0, SCREEN_HEIGHT//2 - 15)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 - 15)
-        player_sprite = player_w
+        player_sprite = live_ast
         player = player_sprite
         
         #Floor
@@ -330,7 +327,7 @@ class Game(object):
         global height
         bg = (0, SCREEN_HEIGHT//2 + 5)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 + 5)
-        player_sprite = player_b
+        player_sprite = death_ast
         player = player_sprite
         
         #Floor
