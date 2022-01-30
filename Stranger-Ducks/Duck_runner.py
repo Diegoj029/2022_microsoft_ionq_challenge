@@ -1,18 +1,12 @@
+from random import randrange as rnd
 from itertools import cycle
+from random import choice
 import pygame as pg
 import time
 from resources_full import *
 from tools import *
 from Qtools import *
 import matplotlib.pyplot as plt
-
-# Use these libraries for classic random implementation
-from random import randrange as rnd
-from random import choice
-
-# Use these libraries for quantum random implementation
-# from quantumRandomFunctions import qrandrange as rnd
-# from quantumRandomFunctions import qchoice as choice
 
 pg.init()
 
@@ -22,7 +16,7 @@ SCREEN_HEIGHT = 600
 SCORE = 0
 direction = 0
 speed = 4
-status = 0    #0 = Alive | 1 = Death | 2 = Superposition
+status = 2    #0 = Alive | 1 = Death | 2 = Superposition
 height = (SCREEN_HEIGHT // 2)
 if status == 2: 
     FPS = 90
@@ -273,7 +267,8 @@ class Game(object):
                 return False
 
     def display_alive_state(self, screen, obstacles, items):
-        global height, alive_ast
+        global height
+        player_height = height-50
         bg = (0, SCREEN_HEIGHT//2 - 15)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 - 15)
         player_sprite = alive_ast
@@ -291,8 +286,8 @@ class Game(object):
                 self.jumping = False
         if height < ((SCREEN_HEIGHT // 2)) and not self.jumping:
             height += 3
-        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, height-50))
-        player_cub = (5, height-50, 5 + player.size[0], height-50 + player.size[1])
+        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, player_height))
+        player_cub = (5, player_height, 5 + player.size[0], player_height + player.size[1])
         
         obstacles.update_items(screen, player_cub)
         items.update_items(screen, player_cub)
@@ -316,15 +311,15 @@ class Game(object):
                 if -(bg[0]) >= (ground_w.size[0] - SCREEN_WIDTH):
                     bg1 = (SCREEN_WIDTH, SCREEN_HEIGHT//2 - 15)
 
-            player_sprite = player_w
-            self.start = obstacles.display_obstacle(screen)
-            if not items.display_item():
-                print("item recolectado")
+            self.start = obstacles.display_obstacle()
+            self.start = items.display_item()
         else:
-            player_sprite = player_b
+            global SCORE
+            SCORE -= 1
 
     def display_death_state(self, screen, obstacles, items):
-        global height, death_ast
+        global height
+        player_height = height-10
         bg = (0, SCREEN_HEIGHT//2 + 5)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 + 5)
         player_sprite = death_ast
@@ -338,12 +333,12 @@ class Game(object):
         if self.jumping:
             if height >= (SCREEN_HEIGHT // 2 -50)-100:
                 height -= 3
-            if height <= (SCREEN_HEIGHT // 2) -50-100:
+            if height <= (SCREEN_HEIGHT // 2 -50)-100:
                 self.jumping = False
         if height < ((SCREEN_HEIGHT // 2)) and not self.jumping:
             height += 3
-        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, height-10))
-        player_cub = (5, height-10, 5 + player.size[0], height-10 + player.size[1])
+        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, player_height))
+        player_cub = (5, player_height, 5 + player.size[0], player_height + player.size[1])
         
         obstacles.update_items(screen, player_cub)
         items.update_items(screen, player_cub)
@@ -367,11 +362,11 @@ class Game(object):
                 if -(bg[0]) >= (ground_b.size[0] - SCREEN_WIDTH):
                     bg1 = (SCREEN_WIDTH, SCREEN_HEIGHT//2 - 15)
 
-            player_sprite = player_w
             self.start = obstacles.display_obstacle()
             self.start = items.display_item()
         else:
-            player_sprite = player_b
+            global SCORE
+            SCORE -= 1
 
     def quantum_effects(self, gate):
         global status, FPS, direction, SCORE, alive_ast, death_ast
