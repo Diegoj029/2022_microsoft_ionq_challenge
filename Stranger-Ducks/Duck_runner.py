@@ -1,12 +1,18 @@
-from random import randrange as rnd
 from itertools import cycle
-from random import choice
 import pygame as pg
 import time
 from resources_full import *
 from tools import *
 from Qtools import *
 import matplotlib.pyplot as plt
+
+# Use these libraries for classic random implementation
+from random import randrange as rnd
+from random import choice
+
+# Use these libraries for quantum random implementation
+# from quantumRandomFunctions import qrandrange as rnd
+# from quantumRandomFunctions import qchoice as choice
 
 pg.init()
 
