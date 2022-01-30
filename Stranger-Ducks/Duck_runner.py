@@ -22,6 +22,8 @@ if status == 2:
     FPS = 90
 else: 
     FPS = 160
+alive_ast = player_w
+death_ast = player_b
 
 """
 ///////////////////////////////////////////////////////////
@@ -207,13 +209,13 @@ class ObstacleManager():
             self.obs3_cub = (self.obs3[0], self.obs3[1], self.obs3[0] - self.obast3.size[0], self.obs3[1] - self.obast3.size[1])
             self.obs4_cub = (self.obs4[0], self.obs4[1], self.obs4[0] - self.obast4.size[0], self.obs4[1] - self.obast4.size[1])
             
-            if self.obs1_cub[0]<=self.self.player_cub[0]-10<=self.obs1_cub[2] and self.obs1_cub[1]<=self.player_stading_cub[1]-10<=self.obs1_cub[3]-5:
+            if self.obs1_cub[0]<=self.player_cub[0]+10<=self.obs1_cub[2] and self.obs1_cub[1]<=self.player_cub[1]+10<=self.obs1_cub[3]+5:
                 return False
-            if self.obs2_cub[0]<=self.player_cub[2]-10<=self.obs2_cub[2] and self.obs2_cub[1]<=self.player_stading_cub[3]-10<=self.obs2_cub[3]-5:
+            if self.obs2_cub[0]<=self.player_cub[0]+10<=self.obs2_cub[2] and self.obs2_cub[1]<=self.player_cub[1]+10<=self.obs2_cub[3]+5:
                 return False
-            if self.obs3_cub[0]<=self.player_stading_cub[2]+10<=self.obs3_cub[2] and self.obs3_cub[1]<=self.player_stading_cub[3]+10<=self.obs3_cub[3]+5:
+            if self.obs3_cub[0]<=self.player_cub[0]+10<=self.obs3_cub[2] and self.obs3_cub[1]<=self.player_cub[1]+10<=self.obs3_cub[3]+5:
                 return False
-            if self.obs4_cub[0]<=self.player_stading_cub[2]+10<=self.obs4_cub[2] and self.obs4_cub[1]<=self.player_stading_cub[3]+10<=self.obs4_cub[3]+5:
+            if self.obs4_cub[0]<=self.player_cub[0]+10<=self.obs4_cub[2] and self.obs4_cub[1]<=self.player_cub[1]+10<=self.obs4_cub[3]+5:
                 return False
 
             return True
@@ -226,20 +228,16 @@ class ObstacleManager():
                 self.obs2_cub = (self.obs2[0], self.obs2[1], self.obs2[0] + self.obast2.size[0], self.obs2[1] + self.obast2.size[1])
                 
                 if self.obs1_cub[0]<=self.player_cub[0]-10<=self.obs1_cub[2] and self.obs1_cub[1]<=self.player_cub[3]+10<=self.obs1_cub[3]-5:
-                    print("Tocó1")
                     return False
                 if self.obs2_cub[0]<=self.player_cub[0]-10<=self.obs2_cub[2] and self.obs2_cub[1]<=self.player_cub[3]+10<=self.obs2_cub[3]-5:
-                    print("Tocó2")
                     return False
             else:
                 self.obs1_cub = (self.obs1[0], self.obs1[1], self.obs1[0] - self.obast1.size[0], self.obs1[1] - self.obast1.size[1])
                 self.obs2_cub = (self.obs2[0], self.obs2[1], self.obs2[0] - self.obast2.size[0], self.obs2[1] - self.obast2.size[1])
                 
-                if self.obs1_cub[0]<=self.player_stading_cub[2]+10<=self.obs1_cub[2] and self.obs1_cub[1]<=self.player_stading_cub[3]+10<=self.obs1_cub[3]+50:
-                    print("Tocó1")
+                if self.obs1_cub[0]<=self.player_cub[2]+10<=self.obs1_cub[2] and self.obs1_cub[1]<=self.player_cub[3]+10<=self.obs1_cub[3]+50:
                     return False
-                if self.obs2_cub[0]<=self.player_stading_cub[2]+10<=self.obs2_cub[2] and self.obs2_cub[1]<=self.player_stading_cub[3]+10<=self.obs2_cub[3]+50:
-                    print("Tocó2")
+                if self.obs2_cub[0]<=self.player_cub[2]+10<=self.obs2_cub[2] and self.obs2_cub[1]<=self.player_cub[3]+10<=self.obs2_cub[3]+50:
                     return False
 
             return True
@@ -373,7 +371,7 @@ class Game(object):
             player_sprite = player_b
 
     def quantum_effects(self, gate):
-        global status, FPS, direction, SCORE
+        global status, FPS, direction, SCORE, alive_ast, death_ast
         ygate = False
         self.old_status = status
         if gate == "notgatebit_w" or gate == "notgatebit_b":
@@ -386,15 +384,36 @@ class Game(object):
                 ygate = not ygate
             else:
                 FPS = FPS * 2
+
         if gate == "zgatebit_w" or gate == "zgatebit_b":
-            if direction == 0: direction = 1
-            else: direction = 0
+            if direction == 0: 
+                direction = 1
+                if alive_ast == player_w:
+                    alive_ast = player_w_up_r
+                    death_ast = player_b_dwn_r
+                else:
+                    alive_ast = player_b_up_r
+                    death_ast = player_w_dwn_r
+            else: 
+                direction = 0
+                if alive_ast == player_w_up_r:
+                    alive_ast = player_w
+                    death_ast = player_b
+                else:
+                    alive_ast = player_b_up_l
+                    death_ast = player_w_dwn_l
+
         if gate == "hgatebit_w" or gate == "hgatebit_b":
             if status == 2: status = self.old_status
             else: status = 2
 
         if gate == "qubit_w_s" or gate == "qubit_w_l":
             SCORE += 1
+        
+        if gate == "swapgatebit_w" or gate == "swapgatebit_b":
+            temp_ast = alive_ast
+            alive_ast = death_ast
+            death_ast = temp_ast
 
 
 
