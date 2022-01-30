@@ -44,7 +44,12 @@ In the main or positive world, qubits will be appearing away from you and will b
 Unlike in a parallel or negative world, negative values qubits will be fired at you frequently and quantum will be rare.
 Your goal is to get a score equal to or greater than the target score as soon as you achieve this you win.
 
+[Imgur](https://i.imgur.com/qXl4kEJ.png)
 
+[Imgur](https://i.imgur.com/v0UXT45.png)
+
+
+[Imgur](https://i.imgur.com/3EfBBOs.png)
 
 
 # Future Scopes and Development
