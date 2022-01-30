@@ -273,10 +273,10 @@ class Game(object):
                 return False
 
     def display_alive_state(self, screen, obstacles, items):
-        global height
+        global height, alive_ast
         bg = (0, SCREEN_HEIGHT//2 - 15)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 - 15)
-        player_sprite = live_ast
+        player_sprite = alive_ast
         player = player_sprite
         
         #Floor
@@ -292,7 +292,7 @@ class Game(object):
         if height < ((SCREEN_HEIGHT // 2)) and not self.jumping:
             height += 3
         player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, height-50))
-        player_cub = (5, height-50, 5 + player.size[0], height-50-player.size[1])
+        player_cub = (5, height-50, 5 + player.size[0], height-50 + player.size[1])
         
         obstacles.update_items(screen, player_cub)
         items.update_items(screen, player_cub)
@@ -324,7 +324,7 @@ class Game(object):
             player_sprite = player_b
 
     def display_death_state(self, screen, obstacles, items):
-        global height
+        global height, death_ast
         bg = (0, SCREEN_HEIGHT//2 + 5)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 + 5)
         player_sprite = death_ast
@@ -343,7 +343,7 @@ class Game(object):
         if height < ((SCREEN_HEIGHT // 2)) and not self.jumping:
             height += 3
         player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, height-10))
-        player_cub = (5, height-10, 5 + player.size[0], height-10-player.size[1])
+        player_cub = (5, height-10, 5 + player.size[0], height-10 + player.size[1])
         
         obstacles.update_items(screen, player_cub)
         items.update_items(screen, player_cub)
