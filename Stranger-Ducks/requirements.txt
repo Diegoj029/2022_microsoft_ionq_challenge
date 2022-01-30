@@ -1,0 +1,10 @@
+pylatexenc
+qiskit
+numpy
+pandas
+matplotlib
+pygame
+scipy
+itertools
+random
+time
