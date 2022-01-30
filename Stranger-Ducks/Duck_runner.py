@@ -1,12 +1,17 @@
-from random import randrange as rnd
-from itertools import cycle
-from random import choice
 import pygame as pg
 import time
 from resources_full import *
 from tools import *
 from Qtools import *
 import matplotlib.pyplot as plt
+
+# Use these libraries for classic random implementation
+from random import randrange as rnd
+from random import choice
+
+# Use these libraries for quantum random implementation
+# from quantumRandomFunctions import qrandrange as rnd
+# from quantumRandomFunctions import qchoice as choice
 
 pg.init()
 
@@ -16,7 +21,7 @@ SCREEN_HEIGHT = 600
 SCORE = 0
 direction = 0
 speed = 4
-status = 2    #0 = Alive | 1 = Death | 2 = Superposition
+status = 0    #0 = Alive | 1 = Death | 2 = Superposition
 height = (SCREEN_HEIGHT // 2)
 if status == 2: 
     FPS = 90
@@ -76,14 +81,14 @@ class ItemManager():
             self.item1_cub = (self.item1[0], self.item1[1], self.item1[0] + self.item_ast1.size[0], self.item1[1] + self.item_ast1.size[1])
 
             if self.item1_cub[0]<=self.player_cub[2]-10<=self.item1_cub[2] and self.item1_cub[1]<=self.player_cub[3]-10<=self.item1_cub[3]-5:
-                return False
+                return self.item1
         else:
             self.item1 = (self.item1[0]-speed, self.item1[1])
         
             self.item1_cub = (self.item1[0], self.item1[1], self.item1[0] + self.item_ast1.size[0], self.item1[1] + self.item_ast1.size[1])
        
             if self.item1_cub[0]<=self.player_cub[2]-10<=self.item1_cub[2] and self.item1_cub[1]<=self.player_cub[3]-10<=self.item1_cub[3]-5:
-                return False
+                return self.item1
 
         return True
 
@@ -267,8 +272,7 @@ class Game(object):
                 return False
 
     def display_alive_state(self, screen, obstacles, items):
-        global height
-        player_height = height-50
+        global height, alive_ast
         bg = (0, SCREEN_HEIGHT//2 - 15)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 - 15)
         player_sprite = alive_ast
@@ -286,8 +290,8 @@ class Game(object):
                 self.jumping = False
         if height < ((SCREEN_HEIGHT // 2)) and not self.jumping:
             height += 3
-        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, player_height))
-        player_cub = (5, player_height, 5 + player.size[0], player_height + player.size[1])
+        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, height-50))
+        player_cub = (5, height-50, 5 + player.size[0], height-50 + player.size[1])
         
         obstacles.update_items(screen, player_cub)
         items.update_items(screen, player_cub)
@@ -312,14 +316,13 @@ class Game(object):
                     bg1 = (SCREEN_WIDTH, SCREEN_HEIGHT//2 - 15)
 
             self.start = obstacles.display_obstacle()
-            self.start = items.display_item()
+            self.quantum_effects(items.display_item())
         else:
             global SCORE
             SCORE -= 1
 
     def display_death_state(self, screen, obstacles, items):
-        global height
-        player_height = height-10
+        global height, death_ast
         bg = (0, SCREEN_HEIGHT//2 + 5)
         bg1 = (ground_w.size[0], SCREEN_HEIGHT//2 + 5)
         player_sprite = death_ast
@@ -333,12 +336,12 @@ class Game(object):
         if self.jumping:
             if height >= (SCREEN_HEIGHT // 2 -50)-100:
                 height -= 3
-            if height <= (SCREEN_HEIGHT // 2 -50)-100:
+            if height <= (SCREEN_HEIGHT // 2) -50-100:
                 self.jumping = False
         if height < ((SCREEN_HEIGHT // 2)) and not self.jumping:
             height += 3
-        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, player_height))
-        player_cub = (5, player_height, 5 + player.size[0], player_height + player.size[1])
+        player = screen.blit(pg.image.fromstring(player.tobytes(), player.size, 'RGBA'), (5, height-10))
+        player_cub = (5, height-10, 5 + player.size[0], height-10 + player.size[1])
         
         obstacles.update_items(screen, player_cub)
         items.update_items(screen, player_cub)
@@ -363,7 +366,7 @@ class Game(object):
                     bg1 = (SCREEN_WIDTH, SCREEN_HEIGHT//2 - 15)
 
             self.start = obstacles.display_obstacle()
-            self.start = items.display_item()
+            self.quantum_effects(items.display_item())
         else:
             global SCORE
             SCORE -= 1
@@ -372,18 +375,18 @@ class Game(object):
         global status, FPS, direction, SCORE, alive_ast, death_ast
         ygate = False
         self.old_status = status
-        if gate == "notgatebit_w" or gate == "notgatebit_b":
+        if gate == notgatebit_w or gate == notgatebit_b:
             if status == 0: status = 1
             else: status = 0
             
-        if gate == "ygatebit_w" or gate == "ygatebit_b":
+        if gate == ygatebit_w or gate == ygatebit_b:
             if not ygate: 
                 FPS = FPS//2
                 ygate = not ygate
             else:
                 FPS = FPS * 2
 
-        if gate == "zgatebit_w" or gate == "zgatebit_b":
+        if gate == zgatebit_w or gate == zgatebit_b:
             if direction == 0: 
                 direction = 1
                 if alive_ast == player_w:
@@ -401,14 +404,14 @@ class Game(object):
                     alive_ast = player_b_up_l
                     death_ast = player_w_dwn_l
 
-        if gate == "hgatebit_w" or gate == "hgatebit_b":
+        if gate == hgatebit_w or gate == hgatebit_b:
             if status == 2: status = self.old_status
             else: status = 2
 
-        if gate == "qubit_w_s" or gate == "qubit_w_l":
+        if gate == qubit_w_s or gate == qubit_w_l:
             SCORE += 1
         
-        if gate == "swapgatebit_w" or gate == "swapgatebit_b":
+        if gate == swapgatebit_w or gate == swapgatebit_b:
             temp_ast = alive_ast
             alive_ast = death_ast
             death_ast = temp_ast
